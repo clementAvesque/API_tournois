@@ -13,24 +13,27 @@ console.log("Hello, Node.js !")
 app.use(express.json())
 
 app.post('/creation_joueur', async (req, res) => {
-  const { discordId } = req.body
+  try {
+    const { discordId } = req.body
 
-  if (!discordId) {
-    return res.status(400).json({ error: "Discord ID est requis." })
-  } else {
-
-    await supabase
-      .from('joueurs')
-      .insert([{ discord_id: discordId }])  // pas besoin de user_id ici
-
-    if (error) {
-      console.error("Erreur insertion :", error)
-      return res.json({ message: "Erreur lors de la création du joueur." })
+    if (!discordId) {
+      return res.status(201).json({ response: "Missing" })
     }
 
-    return res.json({ message: "Joueur créé avec succès.", data })
+    const { data, error } = await supabase
+      .from('joueurs')
+      .insert([{ discord_id: discordId }])
+
+    if (error) {
+      return res.status(201).json({ response: "Error" })
+    }
+
+    return res.status(201).json({ response: "succes", data })
+  } catch (err) {
+    return res.status(201).json({ response: "Err0r" })
   }
 })
+
 app.listen(port, () => {
   console.log(`🚀 Serveur API en écoute sur http://localhost:${port}`)
 })
