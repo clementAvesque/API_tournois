@@ -21,7 +21,7 @@ app.post('/creation_joueur', async (req, res) => {
     }
 
     const { data, error } = await supabase
-      .from('joueurs')
+      .from('users')
       .insert([{ discord_id: discordId }])
 
     if (error) {
