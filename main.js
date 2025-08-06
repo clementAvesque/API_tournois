@@ -29,8 +29,8 @@ app.post('/creation_joueur', async (req, res) => {
     }
 
     return res.status(201).json({ response: "succes", data })
-  } catch (err) {
-    return res.status(201).json({ response: "Err0r" })
+  } catch (error) {
+    return res.status(201).json({ response: "Error" })
   }
 })
 
