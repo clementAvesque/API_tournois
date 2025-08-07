@@ -68,6 +68,44 @@ app.post('/creation_tournois', async (req, res) => {
   }
 });
 
+app.post('/subscribe', async (req, res) => {
+  const { tournamentId, discordId } = req.body;
+
+  if (!tournamentId || !discordId) {
+    return res.status(201).json({ response: "Missing fields: tournamentId et discordId sont obligatoires" });
+  }
+
+  try {
+
+    const existingSubscription = await supabase
+      .from('user_tournament')
+      .select('*')
+      .eq('tournois', tournamentId)
+      .eq('joueur', discordId)
+      .single();
+
+    if (existingSubscription.data) {
+      return res.status(201).json({ response: "Le joueur est déjà inscrit à ce tournoi." });
+    }
+
+    const { data, error } = await supabase
+      .from('user_tournament')
+      .insert([{ tournois: tournamentId, joueur: discordId }]);
+
+
+    if (error) {
+      console.error("Erreur Supabase:", error);
+      return res.status(201).json({ response: "Error", details: error.message });
+      console.log(error)
+    }
+
+    return res.status(201).json({ response: "success", data });
+  } catch (err) {
+    console.error("Erreur serveur:", err);
+    return res.status(500).json({ response: "Server error" });
+  }
+});
+
 app.listen(port, () => {
   console.log(`🚀 Serveur API en écoute sur http://localhost:${port}`)
 })
