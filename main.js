@@ -34,7 +34,39 @@ app.post('/creation_joueur', async (req, res) => {
     console.error("Erreur serveur:", err);
     return res.status(500).json({ response: "Server error" });
   }
-})  // <-- Fermeture du app.post ici
+})
+
+app.post('/creation_tournois', async (req, res) => {
+  const { date, name } = req.body;
+  console.log("Date reçue:", date);
+  const timestamp = new Date(date).toISOString();
+  console.log("Timestamp converti:", timestamp);
+
+  if (!date) {
+    return res.status(400).json({ response: "Missing fields: date est obligatoire" });
+  }
+
+  try {
+    let insertData = { lancement: timestamp };
+    if (name) {
+      insertData.name = name;
+    }
+
+    const { data, error } = await supabase
+      .from('tournois')
+      .insert([insertData]);
+
+    if (error) {
+      console.error(error);
+      return res.status(500).json({ response: "Erreur lors de l'insertion en base" });
+    }
+
+    return res.status(201).json({ response: "success", data });
+  } catch (err) {
+    console.error("Erreur serveur:", err);
+    return res.status(500).json({ response: "Erreur serveur" });
+  }
+});
 
 app.listen(port, () => {
   console.log(`🚀 Serveur API en écoute sur http://localhost:${port}`)
