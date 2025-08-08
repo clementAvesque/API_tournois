@@ -69,10 +69,10 @@ app.post('/creation_tournois', async (req, res) => {
 });
 
 app.post('/subscribe', async (req, res) => {
-  const { tournamentId, discordId } = req.body;
+  const { tournamentId, IdJoueur } = req.body;
 
-  if (!tournamentId || !discordId) {
-    return res.status(201).json({ response: "Missing fields: tournamentId et discordId sont obligatoires" });
+  if (!tournamentId || !IdJoueur) {
+    return res.status(201).json({ response: "Missing fields: tournamentId et IdJoueur sont obligatoires" });
   }
 
   try {
@@ -81,7 +81,7 @@ app.post('/subscribe', async (req, res) => {
       .from('user_tournament')
       .select('*')
       .eq('tournois', tournamentId)
-      .eq('joueur', discordId)
+      .eq('joueur', IdJoueur)
       .single();
 
     if (existingSubscription.data) {
@@ -90,7 +90,7 @@ app.post('/subscribe', async (req, res) => {
 
     const { data, error } = await supabase
       .from('user_tournament')
-      .insert([{ tournois: tournamentId, joueur: discordId }]);
+      .insert([{ tournois: tournamentId, joueur: IdJoueur }]);
 
 
     if (error) {
