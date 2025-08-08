@@ -12,7 +12,7 @@ console.log("Hello, Node.js !")
 
 app.use(express.json())
 
-app.post('/creation_joueur', async (req, res) => {
+app.post(`/${process.env.KEY}/creation_joueur`, async (req, res) => {
   const { discordId } = req.body;
 
   if (!discordId) {
@@ -36,7 +36,7 @@ app.post('/creation_joueur', async (req, res) => {
   }
 })
 
-app.post('/creation_tournois', async (req, res) => {
+app.post(`/${process.env.KEY}/creation_tournois`, async (req, res) => {
   const { date, name } = req.body;
   console.log("Date reçue:", date);
   const timestamp = new Date(date).toISOString();
@@ -68,7 +68,7 @@ app.post('/creation_tournois', async (req, res) => {
   }
 });
 
-app.post('/subscribe', async (req, res) => {
+app.post(`/${process.env.KEY}/subscribe`, async (req, res) => {
   const { tournamentId, IdJoueur } = req.body;
 
   if (!tournamentId || !IdJoueur) {
