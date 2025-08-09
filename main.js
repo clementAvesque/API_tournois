@@ -69,7 +69,7 @@ app.post(`/${process.env.KEY}/creation_tournois`, async (req, res) => {
 });
 
 app.post(`/${process.env.KEY}/subscribe`, async (req, res) => {
-  const { tournamentId, IdJoueur } = req.body;
+  const { tournamentId, discordId } = req.body;
 
   if (!tournamentId || !IdJoueur) {
     return res.status(201).json({ response: "Missing fields: tournamentId et IdJoueur sont obligatoires" });
@@ -81,7 +81,7 @@ app.post(`/${process.env.KEY}/subscribe`, async (req, res) => {
       .from('user_tournament')
       .select('*')
       .eq('tournois', tournamentId)
-      .eq('joueur', IdJoueur)
+      .eq('joueur', discordId)
       .single();
 
     if (existingSubscription.data) {
@@ -105,6 +105,7 @@ app.post(`/${process.env.KEY}/subscribe`, async (req, res) => {
     return res.status(500).json({ response: "Server error" });
   }
 });
+
 
 app.listen(port, () => {
   console.log(`🚀 Serveur API en écoute sur http://localhost:${port}`)
