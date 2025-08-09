@@ -61,7 +61,7 @@ app.post(`/${process.env.KEY}/creation_tournois`, async (req, res) => {
       return res.status(500).json({ response: "Erreur lors de l'insertion en base" });
     }
 
-    return res.status(201).json({ response: "success", data });
+    return res.status(201).json({ response: "success", data: data[0].id });
   } catch (err) {
     console.error("Erreur serveur:", err);
     return res.status(500).json({ response: "Erreur serveur" });
