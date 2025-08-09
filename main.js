@@ -39,34 +39,40 @@ app.post(`/${process.env.KEY}/creation_joueur`, async (req, res) => {
 app.post(`/${process.env.KEY}/creation_tournois`, async (req, res) => {
   const { date, name } = req.body;
   console.log("Date reçue:", date);
-  const timestamp = new Date(date).toISOString();
-  console.log("Timestamp converti:", timestamp);
 
   if (!date) {
     return res.status(400).json({ response: "Missing fields: date est obligatoire" });
   }
 
+  const timestamp = new Date(date).toISOString();
+
   try {
-    let insertData = { lancement: timestamp };
-    if (name) {
-      insertData.name = name;
-    }
+    // Préparation des données à insérer
+    let insertData = {
+      lancement: timestamp,
+      name: name || null // ou tu peux ne pas inclure name si tu veux la valeur par défaut
+    };
 
-    const { data, error } = await supabase
-      .from('tournois')
-      .insert([insertData]);
+    // Insertion dans Supabase
+    const { data: inserted, error: insertError } = await supabase
+      .from("tournois")
+      .insert([insertData])
+      .select();
 
-    if (error) {
-      console.error(error);
+    if (insertError || !inserted || !inserted[0]) {
+      console.error("Erreur d'insertion:", insertError);
       return res.status(500).json({ response: "Erreur lors de l'insertion en base" });
     }
 
-    return res.status(201).json({ response: "success", data: data });
+    console.log("Tournoi inséré:", inserted[0]);
+
+    return res.status(201).json({ response: "success", data: inserted[0].id });
   } catch (err) {
     console.error("Erreur serveur:", err);
     return res.status(500).json({ response: "Erreur serveur" });
   }
 });
+
 
 app.post(`/${process.env.KEY}/subscribe`, async (req, res) => {
   const { tournamentId, discordId } = req.body;
