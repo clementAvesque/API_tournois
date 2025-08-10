@@ -112,6 +112,31 @@ app.post(`/${process.env.KEY}/subscribe`, async (req, res) => {
   }
 });
 
+app.post(`/${process.env.KEY}/unsubscribe`, async (req, res) => {
+  const { tournamentId, discordId } = req.body;
+
+  if (!tournamentId || !discordId) {
+    return res.status(400).json({ response: "Missing fields: tournamentId et discordId sont obligatoires" });
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('user_tournament')
+      .delete()
+      .eq('tournois', tournamentId)
+      .eq('joueur', discordId);
+
+    if (error) {
+      console.error("Erreur Supabase:", error);
+      return res.status(500).json({ response: "Error", details: error.message });
+    }
+
+    return res.status(200).json({ response: "success", data });
+  } catch (err) {
+    console.error("Erreur serveur:", err);
+    return res.status(500).json({ response: "Server error" });
+  }
+});
 
 app.listen(port, () => {
   console.log(`🚀 Serveur API en écoute sur http://localhost:${port}`)
