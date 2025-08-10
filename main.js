@@ -96,7 +96,7 @@ app.post(`/${process.env.KEY}/subscribe`, async (req, res) => {
 
     const { data, error } = await supabase
       .from('user_tournament')
-      .insert([{ tournois: tournamentId, joueur: IdJoueur }]);
+      .insert([{ tournois: tournamentId, joueur: discordId }]);
 
 
     if (error) {
