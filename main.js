@@ -66,7 +66,7 @@ app.post(`/${process.env.KEY}/creation_tournois`, async (req, res) => {
 
     console.log("Tournoi inséré:", inserted[0]);
 
-    return res.status(201).json({ response: "success", data: inserted[0].id });
+    return res.status(201).json({ response: "success", data: inserted[0] });
   } catch (err) {
     console.error("Erreur serveur:", err);
     return res.status(500).json({ response: "Erreur serveur" });
@@ -125,6 +125,31 @@ app.post(`/${process.env.KEY}/unsubscribe`, async (req, res) => {
       .delete()
       .eq('tournois', tournamentId)
       .eq('joueur', discordId);
+
+    if (error) {
+      console.error("Erreur Supabase:", error);
+      return res.status(500).json({ response: "Error", details: error.message });
+    }
+
+    return res.status(200).json({ response: "success", data });
+  } catch (err) {
+    console.error("Erreur serveur:", err);
+    return res.status(500).json({ response: "Server error" });
+  }
+});
+
+app.post(`/${process.env.KEY}/list_player`, async (req, res) => {
+  const { tournamentId } = req.body;
+
+  if (!tournamentId) {
+    return res.status(400).json({ response: "Missing fields: tournamentId est obligatoire" });
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('user_tournament')
+      .select('joueur')
+      .eq('tournois', tournamentId);
 
     if (error) {
       console.error("Erreur Supabase:", error);
