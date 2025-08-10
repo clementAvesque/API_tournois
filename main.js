@@ -77,8 +77,8 @@ app.post(`/${process.env.KEY}/creation_tournois`, async (req, res) => {
 app.post(`/${process.env.KEY}/subscribe`, async (req, res) => {
   const { tournamentId, discordId } = req.body;
 
-  if (!tournamentId || !IdJoueur) {
-    return res.status(201).json({ response: "Missing fields: tournamentId et IdJoueur sont obligatoires" });
+  if (!tournamentId || !discordId) {
+    return res.status(201).json({ response: "Missing fields: tournamentId et discordId sont obligatoires" });
   }
 
   try {
@@ -88,7 +88,7 @@ app.post(`/${process.env.KEY}/subscribe`, async (req, res) => {
       .select('*')
       .eq('tournois', tournamentId)
       .eq('joueur', discordId)
-      .single();
+      .maybeSingle();
 
     if (existingSubscription.data) {
       return res.status(201).json({ response: "Le joueur est déjà inscrit à ce tournoi." });
