@@ -50,7 +50,7 @@ app.post(`/${process.env.KEY}/creation_tournois`, async (req, res) => {
     // Préparation des données à insérer
     let insertData = {
       lancement: timestamp,
-      name: name 
+      name: name || "Tournoi Hebdomadaire"
     };
 
     // Insertion dans Supabase
