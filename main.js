@@ -37,7 +37,7 @@ app.post(`/${process.env.KEY}/creation_joueur`, async (req, res) => {
 })
 
 app.post(`/${process.env.KEY}/creation_tournois`, async (req, res) => {
-  const { date, name } = req.body;
+  const { date, name ,size } = req.body;
   console.log("Date reçue:", date);
 
   if (!date) {
@@ -50,7 +50,8 @@ app.post(`/${process.env.KEY}/creation_tournois`, async (req, res) => {
     // Préparation des données à insérer
     let insertData = {
       lancement: timestamp,
-      name: name || "Tournoi Hebdomadaire"
+      name: name || "Tournoi Hebdomadaire",
+      size: size || 32
     };
 
     // Insertion dans Supabase
@@ -72,7 +73,6 @@ app.post(`/${process.env.KEY}/creation_tournois`, async (req, res) => {
     return res.status(500).json({ response: "Erreur serveur" });
   }
 });
-
 
 app.post(`/${process.env.KEY}/subscribe`, async (req, res) => {
   const { tournamentId, discordId } = req.body;
@@ -162,6 +162,34 @@ app.post(`/${process.env.KEY}/list_player`, async (req, res) => {
     return res.status(500).json({ response: "Server error" });
   }
 });
+
+app.post(`/${process.env.KEY}/data_tournament`, async (req, res) => {
+  const { tournamentId } = req.body;
+
+  if (!tournamentId) {
+    return res.status(400).json({ response: "Missing fields: tournamentId est obligatoire" });
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('tournois')
+      .select('*')
+      .eq('id', tournamentId)
+      .single();
+
+    if (error) {
+      console.error("Erreur Supabase:", error);
+      return res.status(500).json({ response: "Error", details: error.message });
+    }
+
+    return res.status(200).json({ response: "success", data });
+  } catch (err) {
+    console.error("Erreur serveur:", err);
+    return res.status(500).json({ response: "Server error" });
+  }
+});
+
+//fait moi une commande curl pour testé mon endpoint
 
 app.listen(port, () => {
   console.log(`🚀 Serveur API en écoute sur http://localhost:${port}`)
