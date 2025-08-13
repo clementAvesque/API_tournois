@@ -156,7 +156,8 @@ app.post(`/${process.env.KEY}/list_tournament`, async (req, res) => {
   try {
     const { data, error } = await supabase
       .from('tournois')
-      .select('*');
+      .select('*')
+      .eq('end', false);
 
     if (error) {
       console.error("Erreur Supabase:", error);
@@ -164,6 +165,31 @@ app.post(`/${process.env.KEY}/list_tournament`, async (req, res) => {
     }
 
     return res.status(200).json({ response: "success", data });
+  } catch (err) {
+    console.error("Erreur serveur:", err);
+    return res.status(500).json({ response: "Server error" });
+  }
+});
+
+app.post(`/${process.env.KEY}/end_tournament`, async (req, res) => {
+  const { tournamentId } = req.body;
+
+  if (!tournamentId) {
+    return res.status(400).json({ response: "Missing fields: tournamentId est obligatoire" });
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('tournois')
+      .update({ end: true })
+      .eq('id', tournamentId);
+
+    if (error) {
+      console.error("Erreur Supabase:", error);
+      return res.status(500).json({ response: "Error", details: error.message });
+    }
+
+    return res.status(200).json({ response: "success" });
   } catch (err) {
     console.error("Erreur serveur:", err);
     return res.status(500).json({ response: "Server error" });
