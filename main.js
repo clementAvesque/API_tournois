@@ -164,7 +164,9 @@ app.post(`/${process.env.KEY}/list_tournament`, async (req, res) => {
       return res.status(500).json({ response: "Error", details: error.message });
     }
 
-    return res.status(200).json({ response: "success", data });
+    const playerIds = data.map(p => p.joueur);
+
+    return res.status(200).json({ response: "success", playerIds });
   } catch (err) {
     console.error("Erreur serveur:", err);
     return res.status(500).json({ response: "Server error" });
@@ -194,6 +196,8 @@ app.post(`/${process.env.KEY}/end_tournament`, async (req, res) => {
     console.error("Erreur serveur:", err);
     return res.status(500).json({ response: "Server error" });
   }
+  //fait moi une commande curl complete avec l'id de tournois qui est 69 qui me permet de lancer ce end point
+  //curl -X POST http://localhost:3000/${process.env.KEY}/end_tournament -d '{"tournamentId": 69}'
 });
 
 app.post(`/${process.env.KEY}/data_tournament`, async (req, res) => {
