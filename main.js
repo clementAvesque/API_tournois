@@ -166,7 +166,7 @@ app.post(`/${process.env.KEY}/list_tournament`, async (req, res) => {
 
     const playerIds = data.map(p => p.joueur);
 
-    return res.status(200).json({ response: "success", playerIds });
+    return res.status(200).json({ response: "success", data: playerIds });
   } catch (err) {
     console.error("Erreur serveur:", err);
     return res.status(500).json({ response: "Server error" });
