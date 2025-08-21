@@ -145,7 +145,8 @@ app.post(`/${process.env.KEY}/list_player`, async (req, res) => {
       return res.status(500).json({ response: "Error", details: error.message });
     }
 
-    return res.status(200).json({ response: "success", data });
+    const playerIds = data.map(p => p.joueur);
+    return res.status(200).json({ response: "success", data: playerIds });
   } catch (err) {
     console.error("Erreur serveur:", err);
     return res.status(500).json({ response: "Server error" });
@@ -164,9 +165,9 @@ app.post(`/${process.env.KEY}/list_tournament`, async (req, res) => {
       return res.status(500).json({ response: "Error", details: error.message });
     }
 
-    const playerIds = data.map(p => p.joueur);
 
-    return res.status(200).json({ response: "success", data: playerIds });
+
+    return res.status(200).json({ response: "success", data });
   } catch (err) {
     console.error("Erreur serveur:", err);
     return res.status(500).json({ response: "Server error" });
